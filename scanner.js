@@ -2,7 +2,7 @@
 const camara = document.getElementById("camara");
 const snap = document.getElementById("snap");
 const resultadoOcr = document.getElementById("resultado-ocr");
-const lienzo = document.getElementById("canvas");
+const lienzo = document.getElementById("lienzo");
 
 // 2 - Definir la funcion para iniciar la camara
 async function iniciarCamara() {
@@ -35,11 +35,12 @@ snap.addEventListener("click", () => {
   // Porcesar la imagen con Tesseract.js
   Tesseract.recognize(imagenDatos, "spa")
     .then((resultado) => {
-      // Guardar texto
-      const textoExtraido = resultado.data.text;
+      const textoSucio = resultado.data.text;
+
+      const textoFinalLimpio = procesarTextoOCR(textoSucio);
 
       // Aplicar resultado en text area de HTML
-      resultadoOcr.value = textoExtraido;
+      resultadoOcr.value = textoFinalLimpio;
     })
     .catch((error) => {
       console.error("Error durante el procesamiento de OCR:", error);
@@ -48,3 +49,31 @@ snap.addEventListener("click", () => {
 
 // 4 - Arrancar la aplicacion
 iniciarCamara();
+
+// Funcion para limpiar los datos del OCR
+function procesarTextoOCR(textosucio) {
+  // Almacenar datos limpios
+  const datosLimpios = {
+    ci: "No encontrado",
+    fechaNacimiento: "No encontrado",
+    textoCrudo: textosucio,
+  };
+
+  // Busqueda de CI con regex
+  const regexCI = /\b\d{6,8}\b/;
+  const matchCI = textosucio.match(regexCI);
+
+  if (matchCI) {
+    datosLimpios.ci = matchCI[0]; // Guardar CI encontrado
+  }
+
+  // Busqueda de fecha de nacimiento con regex
+  const regexFecha = /\b\d{2}-\d{2}-\d{4}\b/;
+  const matchFecha = textosucio.match(regexFecha);
+
+  if (matchFecha) {
+    datosLimpios.fechaNacimiento = matchFecha[0]; // Guardar fecha encontrada
+  }
+
+  return `CI: ${datosLimpios.ci}\nFecha de Nacimiento: ${datosLimpios.fechaNacimiento}\n\n--- Texto Original ---\n${textosucio}`;
+}
