@@ -1,0 +1,10 @@
+# Dependencias de Node
+node_modules/
+
+# Variables de Entorno y Secretos
+.env
+
+# Archivos de datos locales
+*.json
+!package.json
+!package-lock.json
