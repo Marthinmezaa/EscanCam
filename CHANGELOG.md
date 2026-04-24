@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.0.0...v1.1.0) (2026-04-24)
+
+
+### Features
+
+* inicializar servidor backend con Express y configurar endpoint … ([63dd9bc](https://github.com/Marthinmezaa/EscanCam/commit/63dd9bcfeefa0a12d07433892c96765dda8056ec))
+* inicializar servidor backend con Express y configurar endpoint POST ([588ce59](https://github.com/Marthinmezaa/EscanCam/commit/588ce5964cde90de86f324268d51f184203c27ee))
+
 ## 1.0.0 (2026-04-10)
 
 
