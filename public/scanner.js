@@ -4,7 +4,7 @@ const snap = document.getElementById("snap");
 const resultadoOcr = document.getElementById("resultado-ocr");
 const lienzo = document.getElementById("lienzo");
 
-// 2 - Definir la funcion para iniciar la camara
+// Funcion para iniciar la camara
 async function iniciarCamara() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -18,7 +18,28 @@ async function iniciarCamara() {
   }
 }
 
-// 3 - Agregar el evento click al boton de captura
+// Funcion para enviar la imagen al Backend
+async function enviarFotoAlServidor(imagenBase64) {
+  try {
+    console.log("Enviando foto al servidor");
+
+    const respuesta = await fetch("http://localhost:3000/api/scan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ foto: imagenBase64 }),
+    });
+
+    const datosDelServidor = await respuesta.json();
+
+    console.log("El servidor respondio:", datosDelServidor);
+  } catch (error) {
+    console.error("Error al conectar con el servidor", error);
+  }
+}
+
+// Agregar el evento click al boton de captura
 snap.addEventListener("click", () => {
   // Preparado de lienzo para capturar la imagen
   lienzo.width = camara.videoWidth;
@@ -28,6 +49,9 @@ snap.addEventListener("click", () => {
 
   // Obtener la imagen en formato base64
   const imagenDatos = lienzo.toDataURL("image/jpeg");
+
+  // Enviar copia al backend
+  enviarFotoAlServidor(imagenDatos);
 
   // Mostrar mensaje de procesamiento
   console.log("Imagen capturada, procesando OCR...");
@@ -47,7 +71,7 @@ snap.addEventListener("click", () => {
     });
 });
 
-// 4 - Arrancar la aplicacion
+// Arrancar la aplicacion
 iniciarCamara();
 
 // Funcion para limpiar los datos del OCR

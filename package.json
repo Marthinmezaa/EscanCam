@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Marthinmezaa/EscanCam#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "tesseract.js": "^7.0.0"
   }
 }
