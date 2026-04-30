@@ -49,7 +49,7 @@ app.post("/api/scan", async (req, res) => {
     const resultado = await Tesseract.recognize(fotoBase64, "spa");
     const textoCrudo = resultado.data.text;
 
-    console.log("2-Ocr finalizado. Limpiando datos.");
+    console.log("2-OCR finalizado. Limpiando datos.");
 
     const datosLimpios = procesarTextoOCR(textoCrudo);
 

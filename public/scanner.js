@@ -43,7 +43,11 @@ async function enviarFotoAlServidor(imagenBase64) {
 }
 
 // Agregar el evento click al boton de captura
-snap.addEventListener("click", () => {
+snap.addEventListener("click", async () => {
+  // ANTI-SPAM (Para lo hacer miles de pedidos con el click)
+  snap.disabled = true;
+  snap.textContent = "Procesando.";
+
   // Preparado de lienzo para capturar la imagen
   lienzo.width = camara.videoWidth;
   lienzo.height = camara.videoHeight;
@@ -58,7 +62,10 @@ snap.addEventListener("click", () => {
   console.log("Imagen capturada, enviando al backend...");
 
   // Enviar copia al backend
-  enviarFotoAlServidor(imagenDatos);
+  await enviarFotoAlServidor(imagenDatos);
+
+  snap.disabled = false;
+  snap.textContent = "Escanear";
 });
 
 // Arrancar la aplicacion
