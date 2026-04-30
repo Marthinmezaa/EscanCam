@@ -18,10 +18,10 @@ async function iniciarCamara() {
   }
 }
 
-// Funcion para enviar la imagen al Backend
+// Funcion para enviar la imagen al Backend y recibir los datos limpios
 async function enviarFotoAlServidor(imagenBase64) {
   try {
-    console.log("Enviando foto al servidor");
+    console.log("Enviando foto al servidor...");
 
     const respuesta = await fetch("http://localhost:3000/api/scan", {
       method: "POST",
@@ -32,10 +32,13 @@ async function enviarFotoAlServidor(imagenBase64) {
     });
 
     const datosDelServidor = await respuesta.json();
-
     console.log("El servidor respondio:", datosDelServidor);
+
+    // Muestra los datos limpios devueltos por el servidor en la pantalla
+    resultadoOcr.value = datosDelServidor.datos;
   } catch (error) {
     console.error("Error al conectar con el servidor", error);
+    resultadoOcr.value = "Error al conectar con el servidor.";
   }
 }
 
@@ -50,54 +53,13 @@ snap.addEventListener("click", () => {
   // Obtener la imagen en formato base64
   const imagenDatos = lienzo.toDataURL("image/jpeg");
 
+  // Mostrar mensaje de carga temporal en el área de texto
+  resultadoOcr.value = "Procesando imagen en el servidor. Por favor espere...";
+  console.log("Imagen capturada, enviando al backend...");
+
   // Enviar copia al backend
   enviarFotoAlServidor(imagenDatos);
-
-  // Mostrar mensaje de procesamiento
-  console.log("Imagen capturada, procesando OCR...");
-
-  // Porcesar la imagen con Tesseract.js
-  Tesseract.recognize(imagenDatos, "spa")
-    .then((resultado) => {
-      const textoSucio = resultado.data.text;
-
-      const textoFinalLimpio = procesarTextoOCR(textoSucio);
-
-      // Aplicar resultado en text area de HTML
-      resultadoOcr.value = textoFinalLimpio;
-    })
-    .catch((error) => {
-      console.error("Error durante el procesamiento de OCR:", error);
-    });
 });
 
 // Arrancar la aplicacion
 iniciarCamara();
-
-// Funcion para limpiar los datos del OCR
-function procesarTextoOCR(textosucio) {
-  // Almacenar datos limpios
-  const datosLimpios = {
-    ci: "No encontrado",
-    fechaNacimiento: "No encontrado",
-    textoCrudo: textosucio,
-  };
-
-  // Busqueda de CI con regex
-  const regexCI = /\b\d{6,8}\b/;
-  const matchCI = textosucio.match(regexCI);
-
-  if (matchCI) {
-    datosLimpios.ci = matchCI[0]; // Guardar CI encontrado
-  }
-
-  // Busqueda de fecha de nacimiento con regex
-  const regexFecha = /\b\d{2}-\d{2}-\d{4}\b/;
-  const matchFecha = textosucio.match(regexFecha);
-
-  if (matchFecha) {
-    datosLimpios.fechaNacimiento = matchFecha[0]; // Guardar fecha encontrada
-  }
-
-  return `CI: ${datosLimpios.ci}\nFecha de Nacimiento: ${datosLimpios.fechaNacimiento}\n\n--- Texto Original ---\n${textosucio}`;
-}
