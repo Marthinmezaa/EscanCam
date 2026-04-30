@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.1.0...v1.2.0) (2026-04-27)
+
+
+### Features
+
+* implementar cliente HTTP y resolución de políticas CORS ([7782618](https://github.com/Marthinmezaa/EscanCam/commit/7782618de90576aeeda64275afa8fa956c738e25))
+* implementar cliente HTTP y resolución de políticas CORS ([3571213](https://github.com/Marthinmezaa/EscanCam/commit/357121319f023165da196e01e9843c8de099a41c))
+
 ## [1.1.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.0.0...v1.1.0) (2026-04-24)
 
 
