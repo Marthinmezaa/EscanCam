@@ -33,8 +33,11 @@ function extraerFechaNacimiento(texto) {
 }
 
 // Nombre: todo lo que aparece entre la etiqueta "APELLIDOS, NOMBRES" y la
-// etiqueta "...NACIMIENTO" siguiente (apellido y nombre van en líneas separadas
-// en la cédula real, por eso se juntan los saltos de línea en un espacio).
+// etiqueta "FECHA..." siguiente (apellido y nombre van en líneas separadas en
+// la cédula real, por eso se juntan los saltos de línea en un espacio). El
+// corte es en "FECHA", no en "NACIMIENTO", porque el label completo es
+// "FECHA DE NACIMIENTO" — cortar en "NACIMIENTO" dejaba "FECHA DE" pegado al
+// nombre (bug real, visto probando con una cédula de verdad, no hipotético).
 // ponytail: heurística de layout fijo. Si Tesseract lee mal la propia etiqueta
 // "NOMBRES" (ej. "N0MBRES"), no encuentra nada — el upgrade sería recortar la
 // región de la imagen por coordenadas fijas en vez de anclar por texto.
@@ -42,9 +45,14 @@ function extraerNombre(texto) {
   const etiqueta = texto.match(/APELLIDOS,?\s*NOMBRES/i);
   if (!etiqueta) return null;
   const inicio = etiqueta.index + etiqueta[0].length;
-  const idxNacimiento = texto.slice(inicio).search(/NACIMIENTO/i);
-  const fin = idxNacimiento === -1 ? texto.length : inicio + idxNacimiento;
-  const nombre = texto.slice(inicio, fin).replace(/\s+/g, " ").trim();
+  const idxFecha = texto.slice(inicio).search(/FECHA/i);
+  const fin = idxFecha === -1 ? texto.length : inicio + idxFecha;
+  const nombre = texto
+    .slice(inicio, fin)
+    .replace(/\s+/g, " ")
+    // ruido de OCR ocasional (asteriscos, guiones sueltos) antes del nombre real
+    .replace(/^[^a-zA-ZÀ-ÿ]+/, "")
+    .trim();
   return nombre || null;
 }
 
@@ -68,4 +76,10 @@ function procesarTextoOCR(textosucio) {
   return `CI: ${datosLimpios.ci}\nNombre: ${datosLimpios.nombre}\nFecha de Nacimiento: ${datosLimpios.fechaNacimiento}\n\n--- Texto Original ---\n${textosucio}`;
 }
 
-module.exports = { procesarTextoOCR, preprocesarImagen };
+// Si el OCR no encontró alguno de los tres campos en el string ya formateado.
+// Se usa para decidir si vale la pena reintentar con la imagen preprocesada.
+function faltanCampos(datosFormateados) {
+  return datosFormateados.split("--- Texto Original ---")[0].includes("No encontrado");
+}
+
+module.exports = { procesarTextoOCR, preprocesarImagen, faltanCampos };

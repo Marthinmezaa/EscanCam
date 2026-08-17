@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const Tesseract = require("tesseract.js");
-const { procesarTextoOCR, preprocesarImagen } = require("./ocr");
+const { procesarTextoOCR, preprocesarImagen, faltanCampos } = require("./ocr");
 const app = express();
 const PORT = 3000;
 
@@ -22,15 +22,23 @@ app.post("/api/scan", async (req, res) => {
   }
 
   try {
-    console.log("1-Imagen recibida. Preprocesando y aplicando OCR.");
+    console.log("1-Imagen recibida. Aplicando OCR.");
 
-    const imagenLista = await preprocesarImagen(fotoBase64);
-    const resultado = await Tesseract.recognize(imagenLista, "spa");
-    const textoCrudo = resultado.data.text;
+    // Primero se prueba con la foto tal cual llega: en fotos reales bien
+    // iluminadas suele alcanzar y es ~4x más rápido que preprocesar. Solo si
+    // falta algún campo se reintenta con la imagen preprocesada (más lento,
+    // pero ayuda con fotos oscuras o de baja resolución).
+    let resultado = await Tesseract.recognize(fotoBase64, "spa");
+    let datosLimpios = procesarTextoOCR(resultado.data.text);
 
-    console.log("2-OCR finalizado. Limpiando datos.");
+    if (faltanCampos(datosLimpios)) {
+      console.log("2-Faltan campos, reintentando con la imagen preprocesada.");
+      const imagenLista = await preprocesarImagen(fotoBase64);
+      resultado = await Tesseract.recognize(imagenLista, "spa");
+      datosLimpios = procesarTextoOCR(resultado.data.text);
+    }
 
-    const datosLimpios = procesarTextoOCR(textoCrudo);
+    console.log("3-OCR finalizado.");
 
     res.json({
       mensaje: "Procesamiento completado.",

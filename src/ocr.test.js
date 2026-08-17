@@ -26,9 +26,11 @@ Femenino
 
 test("extrae CI, nombre y fecha de nacimiento (no la de vencimiento)", () => {
   const resultado = procesarTextoOCR(textoOcrDeEjemplo);
-  assert.match(resultado, /CI: 1234567/);
-  assert.match(resultado, /Nombre: PEREZ ROJAS ANA MARIA/);
-  assert.match(resultado, /Fecha de Nacimiento: 15-03-1990/);
+  // match exacto de línea completa, no "contiene" — un match parcial dejaba
+  // pasar el bug real donde "FECHA DE" quedaba pegado al final del nombre
+  assert.match(resultado, /^CI: 1234567$/m);
+  assert.match(resultado, /^Nombre: PEREZ ROJAS ANA MARIA$/m);
+  assert.match(resultado, /^Fecha de Nacimiento: 15-03-1990$/m);
   assert.doesNotMatch(resultado, /Fecha de Nacimiento: 15-03-2030/);
 });
 

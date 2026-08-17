@@ -8,9 +8,10 @@ Escanea una Cédula de Identidad Civil paraguaya con la webcam y extrae sus dato
 1. El frontend (`public/`) captura un frame de la cámara a un `<canvas>` y lo
    convierte a JPEG en base64.
 2. Lo envía por `POST /api/scan` al backend.
-3. El backend (`server.js`) corre el OCR con [`tesseract.js`](https://github.com/naptha/tesseract.js)
-   (idioma español) y parsea el texto reconocido con expresiones regulares para
-   extraer el número de cédula y la fecha de nacimiento.
+3. El backend (`src/server.js`) corre el OCR con [`tesseract.js`](https://github.com/naptha/tesseract.js)
+   (idioma español); si a la primera pasada le falta algún campo, reintenta con la
+   imagen preprocesada (`src/ocr.js`, vía `jimp`). `src/ocr.js` parsea el texto
+   reconocido para extraer nombre, número de cédula y fecha de nacimiento.
 4. Devuelve el resultado al frontend, que lo muestra en pantalla.
 
 ## Requisitos
@@ -21,7 +22,7 @@ Escanea una Cédula de Identidad Civil paraguaya con la webcam y extrae sus dato
 
 ```bash
 npm install
-node server.js
+npm start
 ```
 
 El backend queda escuchando en `http://localhost:3000`. Abrí `public/index.html` en
