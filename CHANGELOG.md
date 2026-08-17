@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.2.0...v1.3.0) (2026-04-30)
+
+
+### Features
+
+* implementar bloqueo de interfaz anti-spam durante peticiones HTTP ([235aaa8](https://github.com/Marthinmezaa/EscanCam/commit/235aaa8f5757e0b55d781217cb0f7862f39c68e2))
+* implementar bloqueo de interfaz anti-spam durante peticiones HTTP ([8a37150](https://github.com/Marthinmezaa/EscanCam/commit/8a3715059406508ccade370e6ffc4ead859197cf))
+
 ## [1.2.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.1.0...v1.2.0) (2026-04-27)
 
 
