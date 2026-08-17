@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.3.0...v1.4.0) (2026-08-17)
+
+
+### Features
+
+* preprocesar imagen con jimp y extraer nombre en el OCR ([3352436](https://github.com/Marthinmezaa/EscanCam/commit/3352436b2027aac764c5593c1b5750acefed2dbd))
+* preprocesar imagen y extraer nombre en el OCR ([d89c6c0](https://github.com/Marthinmezaa/EscanCam/commit/d89c6c0bf84ed67de9d17f496fc273624192c605))
+
 ## [1.3.0](https://github.com/Marthinmezaa/EscanCam/compare/v1.2.0...v1.3.0) (2026-04-30)
 
 
